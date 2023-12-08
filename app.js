@@ -16,10 +16,10 @@ app.listen(port, function () {
 });
 
 pool.query(`CREATE TABLE IF NOT EXISTS Exercises(
-  exercises_id uuid DEFAULT gen_random_uuid(),
+  exercise_id uuid DEFAULT gen_random_uuid(),
   exercise_name TEXT,
   note TEXT,
-  PRIMARY KEY (exercises_id)
+  PRIMARY KEY (exercise_id)
 );`);
 
 pool.query(`CREATE TABLE IF NOT EXISTS Records(
@@ -30,27 +30,12 @@ pool.query(`CREATE TABLE IF NOT EXISTS Records(
   record_reps INT,
   record_weight INT,
   PRIMARY KEY (record_id),
-  FOREIGN KEY (exercise_id) REFERENCES Exercises(exercises_id)
+  FOREIGN KEY (exercise_id) REFERENCES Exercises(exercise_id)
 );`);
 
 app.get('/health', function (request, response) {
   response.send(`
   <h1>OK</h1>`);
-});
-
-app.post('/createExercise', function (request, response) {
-  const sql = `INSERT INTO Exercises(exercise_name, note) VALUES(($1), ($2));`;
-
-  const sqlParameters = [request.body.exercise_name, request.body.note];
-
-  pool.query(sql, sqlParameters, function (error) {
-    if (error) {
-      console.log(error);
-      response.send(`error`);
-    } else {
-      response.send(`success`);
-    }
-  });
 });
 
 app.get('/exercises', function (request, response) {
@@ -65,10 +50,10 @@ app.get('/exercises', function (request, response) {
   });
 });
 
-app.post('/createRecord', function (request, response) {
-  const sql = `INSERT INTO Exercises(exercise_name, note) VALUES(?,?)`;
+app.post('/createExercise', function (request, response) {
+  const sql = `INSERT INTO Exercises(exercise_name, note) VALUES(($1), ($2));`;
 
-  const sqlParameters = [request.body.name, request.body.note];
+  const sqlParameters = [request.body.exercise_name, request.body.note];
 
   pool.query(sql, sqlParameters, function (error) {
     if (error) {
@@ -88,6 +73,21 @@ app.get('/records', function (request, response) {
       response.send(`error`);
     } else {
       response.send(result);
+    }
+  });
+});
+
+app.post('/createRecord', function (request, response) {
+  const sql = `INSERT INTO Exercises(exercise_name, note) VALUES(($1),($2))`;
+
+  const sqlParameters = [request.body.name, request.body.note];
+
+  pool.query(sql, sqlParameters, function (error) {
+    if (error) {
+      console.log(error);
+      response.send(`error`);
+    } else {
+      response.send(`success`);
     }
   });
 });
