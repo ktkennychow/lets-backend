@@ -25,7 +25,10 @@ pool.query(`CREATE TABLE IF NOT EXISTS Exercises(
 pool.query(`CREATE TABLE IF NOT EXISTS Records(
   record_id uuid DEFAULT gen_random_uuid(),
   exercise_id uuid,
-  note TEXT,
+  record_date DATE,
+  record_sets INT,
+  record_reps INT,
+  record_weight INT,
   PRIMARY KEY (record_id),
   FOREIGN KEY (exercise_id) REFERENCES Exercises(exercises_id)
 );`);
@@ -62,29 +65,29 @@ app.get('/exercises', function (request, response) {
   });
 });
 
-// app.post('/createRecord', function (request, response) {
-//   const sql = `INSERT INTO Exercises(exercise_name, note) VALUES(?,?)`;
+app.post('/createRecord', function (request, response) {
+  const sql = `INSERT INTO Exercises(exercise_name, note) VALUES(?,?)`;
 
-//   const sqlParameters = [request.body.name, request.body.note];
+  const sqlParameters = [request.body.name, request.body.note];
 
-//   pool.query(sql, sqlParameters, function (error) {
-//     if (error) {
-//       console.log(error);
-//       response.send(`error`);
-//     } else {
-//       response.send(`success`);
-//     }
-//   });
-// });
+  pool.query(sql, sqlParameters, function (error) {
+    if (error) {
+      console.log(error);
+      response.send(`error`);
+    } else {
+      response.send(`success`);
+    }
+  });
+});
 
-// app.get('/records', function (request, response) {
-//   const sql = `SELECT * FROM Exercises`;
+app.get('/records', function (request, response) {
+  const sql = `SELECT * FROM Records`;
 
-//   pool.query(sql, function (error, result) {
-//     if (error) {
-//       response.send(`error`);
-//     } else {
-//       response.send(result);
-//     }
-//   });
-// });
+  pool.query(sql, function (error, result) {
+    if (error) {
+      response.send(`error`);
+    } else {
+      response.send(result);
+    }
+  });
+});
