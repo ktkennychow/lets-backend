@@ -1,6 +1,10 @@
-import pkg from 'pg';
-const { Pool } = pkg;
-const pool = new Pool();
+import pg from 'pg';
+const { Pool } = pg;
+const pool = new Pool({
+  host: 'localhost',
+  database: 'lets-backend',
+  port: 5432,
+});
 
 async function createTables() {
   const client = await pool.connect();
@@ -14,8 +18,8 @@ async function createTables() {
       CREATE TABLE IF NOT EXISTS users (
         id uuid DEFAULT gen_random_uuid(),
         firebase_uid TEXT NOT NULL UNIQUE,
-        email TEXT,
-        username TEXT,
+        email TEXT NOT NULL UNIQUE,
+        username TEXT NOT NULL,
         PRIMARY KEY (id)
       );
     `);

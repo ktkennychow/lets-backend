@@ -5,7 +5,7 @@ const router = new Router();
 
 // GET A USER
 const getUserByFirebaseId = async (request, response) => {
-  const { firebase_uid } = request.body;
+  const firebase_uid = request.params.id;
   const sql = `SELECT firebase_uid, email, username FROM Users WHERE firebase_uid = $1;`;
 
   const result = await db.query(sql, [firebase_uid]).catch((error) => {
@@ -13,7 +13,7 @@ const getUserByFirebaseId = async (request, response) => {
   });
   response.send(result.rows[0]);
 };
-router.get('/', getUserByFirebaseId);
+router.get('/:id', getUserByFirebaseId);
 
 // CREATE A USER
 const createUser = async (request, response) => {
